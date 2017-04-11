@@ -62,23 +62,23 @@ The matrix is the Jacobian related to x and matrix B is the Jacobian related to 
 $x=[x \ y \ z \ v_x \ v_y \ v_z \ \phi \ \theta \ \psi w_x w_y w_z]  $
 
 $$
-A = 
+A(x_equilibrium) = 
 \begin{bmatrix}
 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
 
-0 & 0 & 0 & -\frac{kd}{m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & -\frac{kd}{m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & -\frac{kd}{m} & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & -\frac{k_d}{m} & 0 & 0 & 0 & \frac{k \cdot c_m}{m}(v_1^2+v_2^2+v_3^2+v_4^2) & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & -\frac{k_d}{m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & -\frac{k_d}{m} & 0 & 0 & 0 & 0 & 0 & 0 \\
 
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & w_z & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & -w_z & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & w_y & 0 & 0 & 0 & 0 & 1 \\
 
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -\frac{I_{yy}-I_{zz}}{I_{xx}}w_z & -\frac{I_{yy}-I_{zz}}{I_{xx}}w_y \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &  -\frac{I_{zz}-I_{xx}}{I_{yy}}w_z & 0 & -\frac{I_{zz}-I_{xx}}{I_{yy}}w_x \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -\frac{I_{xx}-I_{yy}}{I_{zz}}w_y & -\frac{I_{xx}-I_{yy}}{I_{zz}}w_x & 0
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
 \end{bmatrix}
 $$
 
@@ -87,20 +87,23 @@ u = [u_1 \ u_2 \ u_3 \ u_4] = [v_1^2 \ v_2^2 \ v_3^2 \ v_4^2 ]
 $$
 
 $$
-B = 
+B(u_{fixedpoint}) = 
 \begin{bmatrix}
 0 & 0 & 0 & 0 \\ %x
 0 & 0 & 0 & 0 \\ %y
 0 & 0 & 0 & 0 \\ %z
+
 0 & 0 & 0 & 0 \\ %vx dot
 0 & 0 & 0 & 0 \\ %vy dot
-0 & 0 & 0 & \frac{k \ C_m  }{m} \\ %vz dot
+\frac{k \ C_m  }{m} \cdot 2v_1 & \frac{k \ C_m  }{m} \cdot 2v_2 & \frac{k \ C_m  }{m} \cdot 2v_3 & \frac{k \ C_m  }{m} \cdot 2v_4 \\ %vz dot
+
 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 \\
 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 \\
+
+\frac{Lkc_m}{I_{xx}}2v_1 & 0 & -\frac{Lkc_m}{I_{xx}}2v_3 & 0 \\
+0 & \frac{Lkc_m}{I_{zz}}2v_2 & 0 & -\frac{Lkc_m}{I_{zz}}2v_4 \\
+\frac{bc_m}{I_{zz}}2v_1 & -\frac{bc_m}{I_{zz}}2v_2 & \frac{bc_m}{I_{zz}}2v_3 & -\frac{bc_m}{I_{zz}}2v_4 \\
 \end{bmatrix}
 $$
 
