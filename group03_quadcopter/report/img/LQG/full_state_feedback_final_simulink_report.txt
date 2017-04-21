@@ -1,0 +1,21 @@
+---------------------------------------------
+   Quadcopter exercise - Simulation Report
+---------------------------------------------
+
+Full state vector: available
+Number of checkpoints reached: 7/7
+Payload: 0 kg
+
+Timing:
+-------
+From initial pos. to checkpoint 1: 1.650 s
+From checkpoint 1 to checkpoint 2: 4.200 s
+From checkpoint 2 to checkpoint 3: 4.750 s
+From checkpoint 3 to checkpoint 4: 4.250 s
+From checkpoint 4 to checkpoint 5: 4.900 s
+From checkpoint 5 to checkpoint 6: 4.000 s
+From checkpoint 6 to checkpoint 7: 0.728 s
+
+Average time: 3.497 s
+
+---------------------------------------------

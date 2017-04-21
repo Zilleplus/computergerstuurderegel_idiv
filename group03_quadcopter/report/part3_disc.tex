@@ -1,0 +1,6 @@
+\section{discretization}
+\subsection{options}
+The 3 options are zero-order hold, Euler's rule and the bilinear transformation. (using a sampling time of $T_s=0.05s$). The matrix A is not invertible which means that the zero and hold is not viable. 
+
+\subsection{choice discretization rule}
+The bilinear transformation always maps stable poles in the continuous domain to stable poles in the discrete domain. However in this particular case both Euler and the bilinear transformation have stable poles. The are both fully controllable and observable. The only real difference is in the transmission zeros, the  bilinear transformation has transmission zeros while Euler does not. This makes the  bilinear transformation the preferred choice in this case. As transmission zeros are stable which means the system is minimum phase system as the 8 transmission zeros are all -1 which is inside the unit circle.

@@ -1,4 +1,5 @@
-\documentclass[11pt,a4paper]{report}
+%\documentclass[11pt,a4paper]{report}
+\documentclass{article}
 \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 
 %%%%%%%%%%%%%%%%
@@ -7,7 +8,14 @@
 
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{parskip}
 
+% used with figures:
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\graphicspath{{./img/}}
 
 
 %%%%%%%%%%%%%
@@ -33,8 +41,10 @@
 
 \input{part1_intro.tex}
 \input{part2_linearization.tex}
+\input{part3_disc.tex}
+\input{part4_LQG.tex}
 
-\appendix
+% \appendix
 % \section*{Codes}
 % \addcontentsline{toc}{section}{Codes}
 % \input{appendix/code.tex}
