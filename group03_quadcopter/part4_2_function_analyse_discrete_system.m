@@ -12,15 +12,19 @@ function [  ] = analyse_discrete_system( Ad,Bd,Cd,Dd,Ts )
     C_= ctrb(Ad,Bd);
     disp(['The rank of the controllability matrix should be 12 in reality it is ' ...
         num2str(rank(C_))]);
-    [V,~]=eig(Ad');
-    disp(Bd'*V);
+    [~,svd_D,~]=svd(C_);
+    disp(['The smallest singular values is:' num2str(min(diag(svd_D)))]);
+%     [V,~]=eig(Ad');
+%     disp(Bd'*V);
 
     % observability / detectable
     OO=obsv(Ad,Cd);
     disp(['The rank of the observability matrix should be 12 in reality it is ' ... 
         num2str(rank(OO))]);
-    [V,~]=eig(Ad); 
-    disp(Cd*V);
+    [~,svd_D,~]=svd(OO);
+    disp(['The smallest singular values is:' num2str(min(diag(svd_D)))]);
+%     [V,~]=eig(Ad); 
+%     disp(Cd*V);
 
     % are there any transmission zeros?
     transmission_zeros_discrete = tzero(sys_discrete);

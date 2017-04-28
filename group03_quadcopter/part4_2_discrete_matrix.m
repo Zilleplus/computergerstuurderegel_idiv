@@ -22,13 +22,13 @@ Bd= inv(eye(size(A))-A.*(Ts/2))*B*Ts;
 Cd= C*inv(eye(size(A))-A.*(Ts/2));
 Dd= D + C*inv(eye(size(A))-A.*(Ts/2))*B*(Ts/2);
 
-part4_2_function_analyse_discrete_system(Ad,Bd,Cd,Dd,Ts);
-
 % this is the prefered choice more info in the report
 Adiscrete=Ad;
 Bdiscrete=Bd;
 Cdiscrete=Cd;
 Ddiscrete=Dd;
+%%
+part4_2_function_analyse_discrete_system(Ad,Bd,Cd,Dd,Ts);
 %% zero and hold
 clc;
 % define descrete matrices for euler:
