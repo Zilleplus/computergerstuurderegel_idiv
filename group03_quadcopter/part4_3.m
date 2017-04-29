@@ -74,7 +74,7 @@ I_filter = eye(3,6);
 % define an Q and an R
 ss_discrete=ss(Adiscrete,Bdiscrete,Cdiscrete,Ddiscrete,Ts);
 Q=eye(size(A,2));
-Q(3,3)=10^2;%10^2; %10^2 is the magic number :-)
+Q(3,3)=10^4;%10^2; %10^2 is the magic number :-)
 R=eye(size(B,2));
 R=R*0.1;
 
@@ -95,11 +95,15 @@ Nu=sol(13:end,:);
 % [L,P,E] = lqe(A,G,C,Q,R,N)
 
 % output noise:
-R=diag([2.5*10^-5 2.5*10^-5 2.5*10^-5 7.57*10^-5 7.57*10^-5 7.57*10^-5]);
+R_kalman=diag([2.5*10^-5 2.5*10^-5 2.5*10^-5 7.57*10^-5 7.57*10^-5 7.57*10^-5]);
 % state noise:
-Q=eye(12);
-% w=12x1 and v=6x1 -> E{wv'} = N
-N=zeros(12,6);
-G=eye(12,12);
+Q_kalman=eye(12).*10^-3;
 
-[L,~,~] = lqe(Adiscrete,G,Cdiscrete,Q,R,N);
+Q_kalman(1:3,1:3)=eye(3,3)*10^-1;
+Q_kalman(6,6)=10^2;
+
+% w=12x1 and v=6x1 -> E{wv'} = N
+N_kalman=zeros(12,6);
+G_kalman=eye(12,12);
+
+[L,~,~] = lqe(Adiscrete,G_kalman,Cdiscrete,Q_kalman,R_kalman,N_kalman);

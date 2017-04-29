@@ -1,13 +1,13 @@
 \section{LQR controller without payload}
 \subsection{full-state feedback controller}
 
-The controller is constructed in Simulink (Figure~\ref{fig:simulink diagram full-state feedback controller}) according to the diagram on page 221 of the course notes. A type 1 full-state feedback was used as its more robust, which is desirable as its controlling a flying object. 
+The controller is constructed in Simulink (Figure~\ref{fig:diagram full-state feedback controller}) according to the diagram on page 221 of the course notes. A type 1 full-state feedback was used as its more robust, which is desirable as its controlling a flying object. 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{./LQR_noload/full_state_feedback_simu.png}
 	\caption{simulink diagram full-state feedback controller}
-	\label{fig:simulink diagram full-state feedback controller}
+	\label{fig:diagram full-state feedback controller}
 \end{figure}
 
 The matrix K is calculate with the LQR method as we did in the second exercise session. However in order to do LQR we need a matrix Q and R. As LQR minimizes $J_N = \frac{1}{2} \sum_{k=0}^{N-1}[x_k^TQx_k + u^T_kRu_k] + \frac{1}{2}x_N^TQx_N$. Notice how Q determines the weights given to $x_k$ and and R determines the weights given to $u_k$. 
@@ -89,7 +89,7 @@ Lowering the values of R  will result in higher voltages and so an increase spee
 		\includegraphics[width=\textwidth]{./LQR_noLoad/full_state/full_state_feedback_final_fig2.eps}
 		\caption{track}
 	\end{subfigure}
-	\caption{full-state controller with proper diagonal matrices as Q and R}\label{fig:full-state controller with proper diagonal matrices as Q and R}
+	\caption{full-state controller with proper diagonal matrices as Q and R, average time is 3.214 s}\label{fig:full-state controller with proper diagonal matrices as Q and R}
 \end{figure}
 \subsubsection{Final weight matrices}
 
