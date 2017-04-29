@@ -1,3 +1,14 @@
+% load the lin model:
+run('part4_1_lin_approx.m');
+clc;
+
+% define descrete matrices for euler:
+Adiscrete= inv(eye(size(A))-A.*(Ts/2))*(eye(size(A))+A.*(Ts/2));
+Bdiscrete= inv(eye(size(A))-A.*(Ts/2))*B*Ts;
+Cdiscrete= C*inv(eye(size(A))-A.*(Ts/2));
+Ddiscrete= D + C*inv(eye(size(A))-A.*(Ts/2))*B*(Ts/2);
+
+disp('ready to calculate the controllers !');
 
 %% implement a full state controller:
 % define an Q and an R

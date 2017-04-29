@@ -6,7 +6,7 @@ sys_continue = ss(A,B,C,D);
 
 %% Euler
 clc;
-% define descrete matrices for euler:
+% define descrete matrices euler:
 Ad=(eye(size(A))+A.*Ts);
 Bd=B*Ts;
 Cd=C;
@@ -16,22 +16,16 @@ part4_2_function_analyse_discrete_system(Ad,Bd,Cd,Dd,Ts);
 
 %% Bilinear
 clc;
-% define descrete matrices for euler:
+% define descrete matrices bilear method:
 Ad= inv(eye(size(A))-A.*(Ts/2))*(eye(size(A))+A.*(Ts/2));
 Bd= inv(eye(size(A))-A.*(Ts/2))*B*Ts;
 Cd= C*inv(eye(size(A))-A.*(Ts/2));
 Dd= D + C*inv(eye(size(A))-A.*(Ts/2))*B*(Ts/2);
 
-% this is the prefered choice more info in the report
-Adiscrete=Ad;
-Bdiscrete=Bd;
-Cdiscrete=Cd;
-Ddiscrete=Dd;
-%%
 part4_2_function_analyse_discrete_system(Ad,Bd,Cd,Dd,Ts);
 %% zero and hold
 clc;
-% define descrete matrices for euler:
+% define descrete matrices zero and hold:
 Ad=exp(A*Ts);
 Bd=inv(A)*(exp(A*Ts)-eye(size(A)))*B;
 Cd=C;
