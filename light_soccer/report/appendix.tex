@@ -1,0 +1,113 @@
+\section{appendix: Step Responses}
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.35\textwidth}
+			\includegraphics[width=\textwidth]{./keeperModel/cont_step.eps}
+			\caption{step response with continue}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.35\textwidth}
+			\includegraphics[width=\textwidth]{./keeperModel/zoh_step.eps}
+			\caption{step response with ZOH}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.35\textwidth}
+			\includegraphics[width=\textwidth]{./keeperModel/euler_step.eps}
+			\caption{step response with euler}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.35\textwidth}
+			\includegraphics[width=\textwidth]{./keeperModel/backr_step.eps}
+			\caption{step response with backward rectangle rule}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.35\textwidth}
+			\includegraphics[width=\textwidth]{./keeperModel/bil_step.eps}
+			\caption{step response with bilinear transformation}
+		\end{subfigure}
+		\caption{Step responses of the different time discrete models}
+		\label{fig:step responese disc}
+	\end{figure}
+
+\section{appendix: MPC with state constraints, increased F}
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/MPC_0_5_N_F10_traj_input.png}
+			\caption{horizon=N/2}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/MPC_2_N_F10_traj_input.png}
+			\caption{horizon=2N}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/MPC_N_F10_traj_input.png}
+			\caption{horizon=N}
+		\end{subfigure}
+		\caption{MPC with state constraints, $F_{max}=10F_{max}$}
+		\label{fig:MPC with state constraints increased F}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/compare_F10.png}
+			\caption{overview}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/compare_F10_zoom.png}
+			\caption{zoomed in}
+		\end{subfigure}
+		\caption{MPC with state constraints, $F_{max}=10F_{max}$, trajectory comparison}
+		\label{fig:MPC with state constraints increased F, traject comparison}
+	\end{figure}
+
+\section{appendix: MPC with and without terminal constraint}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{MPC_term_cost/compare_ROI_all.png}
+		\caption{MPC with and without terminal cost and different horizons}
+		\label{fig:MPC with and without terminal cost and different horizons}
+	\end{figure}
+\clearpage
+\section{appendix: Matlab Code}
+
+\textbf{Important remark:} the zip contains a folder structure, it is recommended to unzip it and leave everything as it is. The Matlab scripts will automatically put the generated images in these folders. If the folder structure is not present then obviously the Matlab code will not properly run.
+
+The following scripts are relevant to the user:
+\begin{itemize}
+	\item cover.m
+	\item part1.m
+	\item part2\_step\_anal.m
+	\item part2.m
+	\item part3.m
+	\item part4.m
+	\item part5.m
+	\item part5\_compare.m
+	\item part6.m
+	\item part7.m
+	\item part7\_extra.m
+	\item run\_all.m
+\end{itemize}
+
+\textbf{A short description of what each files does:}
+
+"cover.m" : The requested function in the assignment
+
+"part1.m" : Contains everything concerning the costFunction 
+
+"part2.m" : Analysis of the discrete systems (for each rule)
+
+"part2\_step\_anal.m" : Step function of all the discretization rules
+
+"part3.m" : Calculation of the trajectory, the result is saved in reference\_input\_state.mat
+
+"part4.m" : Simulations with LQR
+
+"part5.m" : Simulations with MPC
+
+"part5\_compare.m" : Comparing results MPC and LQR
+
+"part6.m" : Simulations MPC with state constraints
+
+"part7.m" : Simulations MPC with state constraints
+
+"part7\_extra.m" : Comparison MPC with and without terminal cost
+
+"run\_all.m" runs all the above scripts after each other. This takes a long time ! But it will generate all the figures.

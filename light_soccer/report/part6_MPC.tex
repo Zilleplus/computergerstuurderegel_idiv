@@ -1,0 +1,109 @@
+\section{MPC controller}
+\subsection{Formulate the MPC controller}
+The MPC controller van be formally formulated as equation~\ref{eq:MPC def} or equation~\ref{eq:MPC maxtrix def}
+
+\begin{equation}
+	\begin{aligned}
+		& \min_{x_N,u_N}
+		& & \sum^{N}_{i=1} 	(x(k+i) - x_{ref}(k+i))^TQ(x(k+i) - x_{ref}(k+i)) \\
+		& & & + \sum^{N-1}_{i=0} 	(u(k+i) - u_{ref}(k+i))^TR(u(k+i) - u_{ref}(k+i))\\
+		& \text{subject to}
+		& & x(k+1+i) = Ax(k+i) +Bu(k+i) \qquad    i=0,1,..., N-1\\
+		&&& |u(k+i)| \leq u_{max} \qquad    i=0,1,..., N-1
+	\end{aligned}
+	\label{eq:MPC def}
+\end{equation}
+
+Or in matrix form:
+
+\begin{equation}
+	\begin{aligned}
+		& \min_{\tilde{x}}
+		& & \frac{1}{2} \tilde{x}^TH\tilde{x}+f^T\tilde{x} \\
+		& \text{subject to}
+		& & A_e \tilde{x} = b_e \\
+		& & & A_i \tilde{x} \leq b_i
+	\end{aligned}
+	\label{eq:MPC maxtrix def}
+\end{equation}
+
+The Q and R are given in the assignment as: 
+$$
+R =
+\begin{bmatrix}
+10^{-4} & 0 & 0 \\
+0 & 10^{-4} & 0 \\
+0 & 0 & 10^{-4}
+\end{bmatrix}
+$$
+
+$$
+Q =
+\begin{bmatrix}
+10^{-4} & 0 & 0 & 0 & 0 & 0\\
+0 & 10^{-4} & 0 & 0 & 0 & 0\\
+0 & 0 & 10^{-4} & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 
+\end{bmatrix}
+$$
+
+\subsection{Remark on simulating MPC with Matlab}
+One of the problems that occurs when simulating MPC with Matlab is that at the end of the simulation there are not enough steps left to do a full horizon. In this report the last optimal values calculated with a full horizon are used to simulate further to the end. The means that the last N-1 steps are not optimized individually. Thats also why all the simulation contain all the steps. (its easier to compare, especially because there is an sharp corner at the end and a large horizon will stop to soon otherwise)
+
+\subsection{Simulation results}
+Its clear from figure~\ref{fig:MPC simulation} that the larger the horizon the better the results.
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC/MPC_0_5_N_traj_input.png}
+		\caption{horizon=N/2}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC/MPC_2_N_traj_input.png}
+		\caption{horizon=2N}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC/MPC_N_traj_input.png}
+		\caption{horizon=N}
+	\end{subfigure}
+	\caption{simulation of the MPC controllers, with different horizon sizes}
+	\label{fig:MPC simulation}
+\end{figure}
+
+\subsection{Comparison MPC with LQR}
+Figure~\ref{fig:compare LQR and MPC} contains the simulation results of the both the LQR and the MPC. The MPC is better then $LQR_2$ in all 3 cases. The MPC with a horizon of 2N is exceptionally good, while the other 2 smaller horizons are about the same.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{MPC/compare.png}
+	\caption{comparison $LQR_2$ and MPC methods}
+	\label{fig:compare LQR and MPC}
+\end{figure}
+
+\subsection{Total-simulation cost}
+Table~\ref{tab:total-simulation cost MPC} contains the actually values of the objective function. The relative difference is expressed as $\frac{J_{current}-J_{previous}}{J_{current}}$. The value of J goes about 10 times faster down from a horizon of N to 2N then from N/2 to N. Its also obvious that all 3 MPC situations are lower then $3.72 \cdot 10^{4}$, this again confirms that the MPC preforms better then the LQR algorithm.
+
+\begin{minipage}{\linewidth}
+	\centering
+	\captionof{table}{total-simulation cost MPC with different horizons} 
+	\label{tab:total-simulation cost MPC} 
+	\input{./tables/MPC_cost_table}
+\end{minipage}
+%J_N/J_0_5_N=0.9926
+%J_2_N/J_N=0.9886
+
+\subsection{Complexity}
+The computational complexity of quadprog is hard to estimate as its not a method to solve quadratic problems. But rather a function that will decide for itself what underlying method it will use to solve the quadratic problem. The easiest way to get an idea of the complexity is to do some runs with different value for the horizon.
+
+One has to be very careful when making conclusions from these results as the complexity will change if quadprog  changes the method it uses to solve the quadratic problem. As the complexity can suddenly change for some ranges of N. Table~\ref{tab:timings MPC} contains the run times for quadprog for different values of N. Its very clear that the complexity is of order 1, when N is twice as large the problem takes twice as much time.
+
+\begin{minipage}{\linewidth}
+	\centering
+	\captionof{table}{average time quadprog for each iteration of the MPC with different horizons} \label{tab:timings MPC} 
+	\input{./tables/MPC_time_table}
+\end{minipage}
+
+The implication of this on the controller is that a bigger horizon can give better results but the optimization problem will take longer to solve. Here there is some kind of trade off between a fast small horizon controller and large horizon but slow controller.
+
+The trade off should be made taking in account the speed of the process the controller is controlling. There is no point in putting a very fast controller on a slow process or vice versa. "If it takes 3 days to calculate the weather forecast of the next day, its pretty useless in practice."

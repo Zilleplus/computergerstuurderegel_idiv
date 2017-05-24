@@ -1,0 +1,243 @@
+\section{Dynamic keeper model}
+\subsection{Statespace model}
+\begin{equation}
+\begin{cases}
+	\dot{x} = v_x \\
+	\dot{y} = v_y \\
+	\dot{\theta}=\omega \\
+	\dot{v_x} = \frac{1}{m}(F_x - \rho v_x)\\
+	\dot{v_y} = \frac{1}{m}(F_y - \rho v_y)\\
+	\dot{v_z} = \frac{1}{I}(M - 0.01\omega)\\
+\end{cases}
+\label{eq:basic model keeper}
+\end{equation}
+
+Equation \ref{eq:basic model keeper} can be converted into a state space model(equation~\ref{eq:full statepace model goalkeeper}) of the form: $\dot{x} = Ax+Bu$  with $x=[x y \omega v_x v_y v_z]$ and $u=[F_x F_y M]$
+
+\begin{equation}
+\begin{bmatrix}
+\dot{x} \\
+\dot{y} \\
+\dot{\omega} \\
+\dot{v_x} \\
+\dot{v_y} \\
+\dot{\omega} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & \frac{-\rho v_x}{m} & 0 & 0 \\
+0 & 0 & 0 & 0 &\frac{-\rho v_y}{m} & 0 \\
+0 & 0 & 0 & 0 & 0 & -0.01 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\omega \\
+v_x \\
+v_y \\
+\omega \\
+\end{bmatrix}
++
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+m^{-1} & 0 & 0 \\
+0 & m^{-1} & 0 \\
+0 & 0 & I^{-1} \\
+\end{bmatrix}
+\begin{bmatrix}
+F_x \\
+F_y \\
+M \\
+\end{bmatrix}
+\label{eq:full statepace model goalkeeper}
+\end{equation}
+
+\subsection{Discrete-time state space model: Eulers rule}
+
+\subsubsection{Symbolic expressions discrete matrices}
+\begin{equation}
+	\begin{cases}
+		Ad = eye(6) + Ts*A \\
+		Bd = Ts*B \\
+		Cd = C \\
+		Dd = D \\
+	\end{cases}
+\end{equation}
+
+$$
+A_d=
+\begin{bmatrix}
+1 & 0 & 0 & T_s & 0 & 0 \\
+0 & 1 & 0 & 0 & T_s & 0 \\
+0 & 0 & 1 & 0 & 0 & T_s \\
+0 & 0 & 0 & 1 - \frac{\rho v_x}{m}T_s & 0 & 0 \\
+0 & 0 & 0 & 0 & 1 - \frac{\rho v_7}{m}T_s & 0  \\
+0 & 0 & 0 & 0 & 0 & 1-0.01T_s \\
+\end{bmatrix}
+$$
+$$
+B_d=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+m^-1T_s & 0 & 0 \\
+0 & m^-1T_s & 0 \\
+0 & 0 & I^{-1}T_s \\
+\end{bmatrix}
+\ 
+C_d=
+\begin{bmatrix}
+1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 \\
+\end{bmatrix}\ 
+D_d=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+\subsubsection{Numerical values discrete matrices}
+$$
+A_d=
+\begin{bmatrix}
+	1 & 0 & 0 & 0.15 & 0 & 0 \\
+	0 & 1 & 0 & 0 & 0.15 & 0 \\
+	0 & 0 & 1 & 0 & 0 & 0.15 \\
+	0 & 0 & 0 & 0.9667 & 0 & 0 \\
+	0 & 0 & 0 & 0& 0.9667 & 0  \\
+	0 & 0 & 0 & 0 & 0 & 0.9992 \\
+\end{bmatrix}
+$$
+$$
+B_d=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0.0017 & 0 & 0 \\
+0 & 0.0017 & 0 \\
+0 & 0 & 0.0833 \\
+\end{bmatrix}
+\ 
+C_d=
+\begin{bmatrix}
+1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 \\
+\end{bmatrix}
+\ 
+D_d=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+\subsubsection{Analysis}
+Figure~\ref{fig:zplot euler} contains a plot of the z domain with the poles and transmission zeros. The poles are all within the unit circle, so the system is stable. Its is important to check this as the Euler rule does not guarantee a stable discrete system if the continuous system is stable. There are no transmission zeros.
+
+The rank of the controllability matrix is 6 with the lowest singular value being 0.00099, the system is observable. The rank of the observability matrix is 6 with the lowest singular value being 0.55, the system is observable.
+
+As the system is stable  the system is stabilisable. And as the system is observable, the system is detectable.
+
+The system is minimum.
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth]{./keeperModel/zplotEuler.eps}
+	\caption{zplot of the discrete system system with Euler's rule}
+	\label{fig:zplot euler}
+\end{figure}
+
+\subsection{Discrete-time state space model: bilinear transformation}
+Figure~\ref{fig:zplot bil} contains a plot of the z domain with the poles and transmission zeros. The poles are all within the unit circle, so the system is stable. The bilinear  transformation always maps all stable poles from the continuous system to stable poles of the discrete system. All 6 of the transmission zeros are within the unit circle at -1 This means the the system is a minimum phase system.
+
+The bilinear transformation always maps the stable poles/zeros from the continuous system over the whole unit circle. This makes the bilinear transformation the most elegant of the 4 methods tried in this report. And so the preferred method if the other methods have similar properties.
+
+The rank of the controllability matrix is 6 with the lowest singular value being 0.00095, the system is observable. The rank of the observability matrix is 6 with the lowest singular value being 0.52, the system is observable.
+
+As the system is stable  the system is stabilisable. And as the system is observable, the system is detectable.
+
+The system is minimum.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth]{./keeperModel/zplotBil.eps}
+	\caption{zplot of the discrete system system with the bilinear transformation}
+	\label{fig:zplot bil}
+\end{figure}
+
+\subsection{Discrete-time state space model: zero order hold}
+Figure~\ref{fig:zplot zoh} contains a plot of the z domain with the poles and transmission zeros. The poles are all within the unit circle, so the system is stable. All 3 of the transmission zeros are within the unit circle at about -1 This means the the system is a minimum phase system.
+
+The rank of the controllability matrix is 6 with the lowest singular value being 0.0009, the system is observable. The rank of the observability matrix is 6 with the lowest singular value being 0.54, the system is observable.
+
+As the system is stable  the system is stabilisable. And as the system is observable, the system is detectable.
+
+The most significant property of the zero and hold method is that it is a step invariant method. Which means that its step impulse is the same as that of the continuous system. This properties is discussed later on in this section when the step impulses are discussed.
+
+The system is minimum.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth]{./keeperModel/zplotZOH.eps}
+	\caption{zplot of the discrete system system with zero order hold}
+	\label{fig:zplot zoh}
+\end{figure}
+
+\subsection{Discrete-time state space model: backward rectangle}
+Figure~\ref{fig:zplot backr} contains a plot of the z domain with the poles and transmission zeros. The poles are all within the unit circle, so the system is stable. All 6 of the transmission zeros are within the unit circle at about 0, some positive some negative. This means the the system is not a minimum phase system. Numerical errors of size $10^-6$ are a lot higher then  $10^{-15}$( machine precision).
+
+The backward rectangle method can only map the stable continuous poles onto stable discrete poles in the circle between 0 and 1. This means that not the entire unit circle is used, in contrast to the bilinear transformation.
+
+The rank of the controllability matrix is 6 with the lowest singular value being 0.0009, the system is observable. The rank of the observability matrix is 6 with the lowest singular value being 0.5, the system is observable.
+
+As the system is stable  the system is stabilisable. And as the system is observable, the system is detectable.
+
+The system is minimum.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth]{./keeperModel/zplotbackr.eps}
+	\caption{zplot of the discrete system system with backward rectangle}
+	\label{fig:zplot backr}
+\end{figure}
+
+\subsection{Step responses}
+Figure~\ref{fig:step responese disc}(in the appendix) contains all the full impulse responses for the first 4 seconds. A step impulse on $F_x$ obviously has little influence on $y$ or $\theta$. Same goes for $F_y$ or $M$, only the diagonal elements are useful. Figure~\ref{fig:step response diag} contains the 3 relevant plots for a step impulse with a simulation time of 2 seconds. 
+
+As mentioned before the zero order hold method is step invariant and so obviously has the best results. The bilinear and forward euler are about equally good and the backward rectangle has the worst step response of all.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{./keeperModel/step_impulse_total_1.png}
+		\caption{step response on $F_x$}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{./keeperModel/step_impulse_total_2.png}
+		\caption{step response on $F_y$}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{./keeperModel/step_impulse_total_3.png}
+		\caption{step response on $M$}
+	\end{subfigure}
+	\caption{step impulse on different imputs}
+	\label{fig:step response diag}
+\end{figure}
+
+\subsection{Selection of transformation method}
+Without looking at any of the results the bilinear transformation seems to be the most obvious option. As it maps over the entire unit circle and is always stable if the continuous system was stable. This was confirmed by the numerical experiments. The transfer-function will change less drastically if the poles and zeros are further away, this will have an effect on the smoothness of the reference inputs. 
+
+When in a later stage the transformation is used to determine the set points, its very noticeable that the reference inputs are the smoothest with the bilinear transformation. And so the bilinear transformation was chose as the discrete transformation method.

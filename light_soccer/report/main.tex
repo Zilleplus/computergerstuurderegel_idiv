@@ -1,0 +1,52 @@
+%\documentclass[11pt,a4paper]{report}
+\documentclass{article}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+
+%%%%%%%%%%%%%%%%
+%%% PACKAGES %%%
+%%%%%%%%%%%%%%%%
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{parskip}
+
+% used with figures:
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\graphicspath{{./img/}}
+
+\usepackage[toc,page,title,titletoc]{appendix}
+
+\title{computer gestuurde regeltechnieken - Part 2}
+\author{Willem Melis (r0348639)}
+\date{\today}
+
+\setcounter{MaxMatrixCols}{20}
+
+
+\begin{document}
+
+\input{title.tex}
+
+\tableofcontents 
+\newpage
+
+\input{part1_intro.tex}
+\input{part2_costFunction.tex}
+\input{part3_dynamicKeeperModel.tex}
+\input{part4_setpoint.tex}
+\input{part5_LQR.tex}
+\input{part6_MPC.tex}
+\input{part7_MPC_state_const.tex}
+\input{part8_MPC_terminal_cost.tex}
+
+\clearpage
+\appendix
+\input{appendix.tex}
+% \section*{Codes}
+% \addcontentsline{toc}{section}{Codes}
+
+
+\end{document}

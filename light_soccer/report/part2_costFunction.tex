@@ -1,0 +1,73 @@
+\section{The cost function}
+\subsection{Formulation}
+The coordinates of the end of the two arms are $p_1$ and $p_2$ are easily determined with simple geometric formula\'s. 
+$$\triangle x=cos(\theta) \cdot d$$
+$$\triangle y = sin(\theta) \cdot d$$
+$$p_1=(x_{k}+\triangle x,y_{k}+\triangle y) = (x_{p_1},y_{p_1})$$
+$$p_2=(x_{k}-\triangle x,y_{k}-\triangle y) =  (x_{p_2},y_{p_2})$$
+
+The points $p_1$ and $p_2$ can then be used to determine the area covered by the goalkeeper. A straight line starting from the attackers position and going trough one of these points will hit the x-axis at the borders of the area. 
+
+The rico of the line using the first point $p_1$ and the attackers position is $a = \frac{y_{a}-y_{p_1}}{x_{a}-x_{p_1}}$ . The function describing the line then becomes equation equation~\ref{eq:simple function describing line trough p1}
+\begin{equation}
+	f(x) = a (x-x_{p_1}) + y_{p_1}
+	\label{eq:simple function describing line trough p1}
+\end{equation}
+
+Some simple algebra will show that $f(x)=0$ occurs if $x=x_{p_1}-a^{-1}\cdot y_{p_1}$. These points are visible on figure~\ref{eq:simple function describing line trough p1} with the green line crossing the x-axis. The smallest of the two x values is the left side and the largest the right side. Now the only thing left is to take the difference with the border of the goal.
+
+Nothing was mentioned in the assignment about what should happen if the area covered by the goalkeeper is outside the goal area. So if the cost function should reward or punish a goalkeeper that covers more then just the goal. In this report its assumed that the goalkeeper should try to cover only the goal. Nothing more or less then that. Thats why absolute value of the difference is saved, everything that is covered outside the goal area adds up to the cost function.  $xl=|zl+goalWidth/2|$ and $xr=|goalWidth/2-zr|$ with zl and zr the coordinates of the 2 borders of the area covered by the goalkeeper.
+
+This means that the cost function of $x_l$ and $x_r$ is semi-positive definite. Which is an excellent properties to have when working with optimization algorithms.Later on $x_l$ and $x_r$ will be squared and added up which would make it semi-positive definite anyway
+
+Although the assignment did not require this it seems safer to make sure that the cost function has no optima outside the allowed goalkeeper area. When the goalkeeper moves out of the penalty area the closest coordinates inside the area are used instead. The cost function then adds the difference from the border value as penalty to the cost value. The penalty is added because derivative driven optimization algorithms don't like flat areas at all. And this ensures that no local minimum can be found outside the penalty area. As at least 1 border value is lower. It might be clever to put the difference between the unfeasible point and the closest border coordinates to a high power. To make the unfeasible area very steep and move gradient based algorithms away from it.
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./costFunction/simpleDemo.png}
+	\caption{simple demo using $x_a = 10$,$y_a=17$ from table 1 in the assignment and goalkeeper with $\theta=\frac{\pi}{1.3}$ x=1 and y=3. The blue line describes the arms, the red line is a straight line between the attack and the goal keeper. And finally the green lines describe the area covered by the goalkeeper}
+	\label{fig:simple demo}
+\end{figure}
+
+\subsection{Optimizing the cost function}
+
+The cost function is defined as $J=x_r^2+x_l^2$  figure~\ref{fig:simple demo J}. The resulting graph of J with a fixed $\theta$ seems to indicate that this cost function is convex if the goalkeeper stays inside the penalty area and $|\theta| \leq \pi $. And the attacker is at the position given in the assignment.
+
+However if the goalkeeper can move out of the penalty area or if the attacker can go inside the penalty area things change drastically. Local optima will start to appear, and the problem is certainly not convex any more.
+
+The Cost function is periodic in function of $\theta$ as $\theta$ is not limited between for example $- \pi$ and $+ \pi$. This can be remedied by adding an constraint in the optimization or adding an additional penalty as was done when moving outside the penalty area.
+
+So if $theta$ is fixed then the function is convex except for the penalty area borders that are very sharp (left and right derivative is not equal, very dangerous). If a smoothing technique would be applied then this could become convex.(if $\theta$ is fixed)
+
+Figure~\ref{fig:simple demo J} contains the value of the log of the cost function solely in function of x $\theta$ and y are constant. There appears to be a nice global optimum. Figure~\ref{fig:simple demo J surf} contains a 3D plot of log the cost function with $\theta=0$, $x \in [-30,30]$ and $y \in [-10,50]$.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./costFunction/simpleDemoJ.png}
+	\caption{ attacker: $x_a = 10$,$y_a=17$ goalkeeper: $\theta=0$ $y \in[-10,10]$ and y=3 the top plot contains $x_l$ and $x_r$ separate while the bottom plot contains J ($J=x_r^2+x_l^2$)}
+	\label{fig:simple demo J}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./costFunction/simpleDemoJSurf.png}
+	\caption{simple demo using $x_a = 10$,$y_a=17$ from table 1 in the assignment and goalkeeper with $\theta=0$ $x \in [-30,30]$ and  $y \in [-10,50]$ $J=x_r^2+x_l^2$}
+	\label{fig:simple demo J surf}
+\end{figure}
+
+Remark: Figure~\ref{fig:simple demo J surf} and figure~\ref{fig:simple demo J} only seem to be flat outside the penalty area, as the small difference is not visible on the log scale.
+
+\subsection{Formulate the optimization problem}
+Because the cost function by definition cannot have an optimal point outside the goalkeeper it is not mandatory to include these conditions. However the border of the goalkeeper area has an dangerous corner on the cost function. It seems safer to include the goalkeeper area and it can't hurt to give the optimizer more information. $\theta$ is chose to be between 0 and $\pi$. 
+\begin{equation}
+	\begin{aligned}
+	& \min_{x,y,\theta}
+	& & costFunction(x,y,\theta)\\
+	& \text{subject to}
+	& & 0 \leq y \leq y_{max}\\
+	&&& |x| \leq x_{max} \\
+	&&& -\pi \leq \theta \leq \pi \\
+	\end{aligned}
+	\label{eq:goalkeeper optimization formulation}
+\end{equation}

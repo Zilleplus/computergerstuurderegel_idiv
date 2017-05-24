@@ -1,0 +1,56 @@
+\section{Setpoint}
+
+\subsection{A first approach}
+
+The theoretical trajectory is displayed in figure~\ref{fig:trajectory}. The coordinates of the trajectory are obviously the x and y state of the keeper. The remaining question is: what are the appropriate inputs to reach these states? Notice that the trajectory starts from (0,0) which slightly simplifies the formula's.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./setpoint/traject.png}
+	\caption{The theoretical trajectory}
+	\label{fig:trajectory}
+\end{figure}
+
+A simple approach is to minimize $J_N = \sum_{k=0}^{N-1} (w_k-y_k)^T(w_k-y_k)$. This is realized with the formula on top of page 127 $u_{opt}=(\mathcal{H}_N^T\mathcal{H}_N)^{-1}\mathcal{H}_N^T(w-\mathcal{O}_nx_0)$, in which $x_0$ can be left out as its zero. The final equation then becomes equation~\ref{eq:least squares optimalisation formula}. After the $u_{ref}$ values are determined for the $x_{ref}$, $u_{ref}$ is used to simulate the system. 
+
+\begin{equation}
+u_{opt}=(\mathcal{H}_N^T\mathcal{H}_N)^{-1}\mathcal{H}_N^Tw
+\label{eq:least squares optimalisation formula}
+\end{equation}
+
+Figure~\ref{fig:least square opti simulation} contains the output of the simulation. The top of figure~\ref{fig:least square opti simulation}  contains the actual trajectory and the bottom contains the $u_{ref}$ used for that trajectory. At first sight this might seem perfect as the goalkeeper perfectly follows the trajectory. However the $u_{ref}$ tells a who different story, $u_{ref}$ is oscillating a lot between extremely high values. $F_{max}$ is of size $10^2$ while $u_{ref}$ contains an $F_x$ of size $10^6$.
+
+Besides the bad $u_ref$ there is an other problem. The matrix $\mathcal{H}_N^T\mathcal{H}_N$ has a condition number of about $10^{21}$. The machine precision that was used is $10^{-15}$, this means the calculations are correct for zero digits. 
+
+\begin{equation}
+u_{opt}=(R+\mathcal{H}_N^TQ\mathcal{H}_N)^{-1}\mathcal{H}_N^TQw
+\label{eq:least squares optimalisation formula with R and Q}
+\end{equation}
+
+\subsection{Lowering the condition number}
+
+An simple way to increase the condition number of a matrix is to add a unit matrix. And so make all the columns of the matrix $\mathcal{H}_N^T\mathcal{H}_N$ more orthogonal to each other. The course notes on page 131 do exactly this. (and more)
+Instead of optimizing  $J_N = (w-y)^T(w-y)$ 2 extra weight matrices $Q$ and $R$ are added : $J_N = u^TRu + (y-w)^TQ(y-w)$. ($u_opt$ now becomes equation~\ref{eq:least squares optimalisation formula with R and Q}) Q is taken as a unit matrix and R is taken as a diagonal matrix with $10^{-4}$ on its diagonal. This will reduce the condition from $10^{21}$ to  $10^{9}$. Now we have 6 significant digits of  accuracy (not taking in account numerical errors as they will be small ). At first one may think that 6 significant digits is not a lot to work with, but consider the fact that there's no guarantee the model itself is correct at 6 digits.
+
+When using a regularization diagonal matrix with $10^{-4}$ the LQR will give very good results. And the MPC will give similar results. Because the LQR has such a good results it leaves no room for the MPC improve the situation. This is why a regularization parameter of $10^{-5}$ was chosen instead of the nice $10^{-4}$. The LQR will have trouble taking the last corner, however the MPC with a horizon of 2N will be able to take that corner very well. And the final result for the MPC with horizon 2N will be better with $10^{-5}$ then  $10^{-4}$.
+
+In short, if only the LQR was used, then $10^{-4}$ is the better option. However the MPC has better results with $10^{-5}$ .
+
+\subsection{Final results}
+
+The results of these new $u_ref$ values is displayed in figure~\ref{fig:least square opti simulation, better condition}. The trajectory is not as good as with the bad conditioned matrix but the $u_ref$ now contains reasonable values. This is actually useful for the application itself.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{./setpoint/simpleLeastSquares.png}
+		\caption{least squares, condition matrix is about $10^{21}$, the inputs are way to big}
+		\label{fig:least square opti simulation}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{./setpoint/conditionedLeastSquares.png}
+		\caption{weighted least squares, condition is about $10^{9}$ using regularization of $10^{-5}$, now the input are better}
+		\label{fig:least square opti simulation, better condition}
+	\end{subfigure}
+	\caption{simulations of the system with $u_{ref}$ for a good and a badly conditioned matrix}
+\end{figure}

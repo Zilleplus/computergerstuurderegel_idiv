@@ -1,0 +1,84 @@
+\section{MPC controller with state constraint}
+	\subsection{definition}
+	The previous definition of the MPC controller(equation~\ref{eq:MPC def}) can be adjusted to incorporate the goalkeeper area (equation~\ref{eq:MPC def state const}). As the y borders are not symmetric the absolute value cannot be used as with y, only with x.
+	
+	\begin{equation}
+		\begin{aligned}
+			& \min_{x_N,u_N}
+			& & \sum^{N}_{i=1} 	(x(k+i) - x_{ref}(k+i))^TQ(x(k+i) - x_{ref}(k+i)) \\
+			& & & + \sum^{N-1}_{i=0} 	(u(k+i) - u_{ref}(k+i))^TR(u(k+i) - u_{ref}(k+i))\\
+			& \text{subject to}
+			& & x(k+1+i) = Ax(k+i) +Bu(k+i) \qquad    i=0,1,..., N-1\\
+			&&& |u(k+i)| \leq u_{max} \qquad    i=0,1,..., N-1 \\
+			&&& y_{min} \leq y(k+i)| \leq y_{max} \qquad    i=1,..., N \\
+			&&& |x(k+i)| \leq x_{max} \qquad    i=1,..., N
+		\end{aligned}
+		\label{eq:MPC def state const}
+	\end{equation}
+	
+	Figure~\ref{fig:MPC state constraint} contains the numerical results of the simulation of the MPC with state constraints. Even without increasing the $F_{max}$ the controller succeeds in taking a turn right before the $y_{max}$ border. 
+
+\subsection{Simulation}
+	The goalkeeper can't keep following the trajectory when it goes outside the goalkeeper area. The bigger the horizon the better the goalkeeper can adjust and make the corner more natural. A horizon of N/2 is clearly less elegant then a horizon of 2N. 
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/MPC_0_5_N_traj_input.png}
+			\caption{MPC with horizon N/2}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/MPC_N_traj_input.png}
+			\caption{MPC with horizon N}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/MPC_2_N_traj_input.png}
+			\caption{MPC with horizon 2N}
+		\end{subfigure}
+		\caption{Simuation of MPC with state constrain forfor different horizons and fixed $F_{max}$ to the normal value}
+		\label{fig:MPC state constraint}
+	\end{figure}
+	Figure~\ref{fig:MPC with state constrain, traject} illustrates the importance of the horizon even further. The right image is zoomed in on the border of the state constraint. The horizon of 0.5N clearly trouble adjusting too the state constraint.
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/compare.png}
+			\caption{}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/compare_zoom.png}
+			\caption{}
+		\end{subfigure}
+		\caption{Trajectory of MPC with state constrain for different horizons and fixed $F_{max}$ to the normal value}
+		\label{fig:MPC with state constrain, traject}
+	\end{figure}
+
+\subsection{In-feasibilities}
+	If the horizon is decreased to 5 the controller gets into trouble as can be observed in figure~\ref{fig:MPC state constraints N=5}. The quadratic optimization problem becomes infeasible and the simulation stops. If $F_{max}$  is increased by a factor of 10 then the controller does succeed in taking its turn. 
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/inf_traj_input.png}
+			\caption{MPC with state constraint horizon=5}
+			\label{fig:MPC state constraints N=5}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.45\textwidth}
+			\includegraphics[width=\textwidth]{MPC_state_constraint/inf_F10_traj_input.png}
+			\caption{MPC with state constraint horizon=5 and $F_{max}=10 F_{max}$}
+			\label{fig:MPC state constraints N=5 F=10F}
+		\end{subfigure}
+		\caption{MPC with state constrains and very low horizon value}
+	\end{figure}
+	
+\subsection{Total-simulation cost}
+	The total-simulation cost of the MPC with state constraint is clearly lower then that of the MPC without state constraint. This due to the fact that the state constrains keep the state value closer to the origin which obviously lowers the value of $J=x^TQx+u^TRu$.
+	
+	\begin{minipage}{\linewidth}
+		\centering
+		\captionof{table}{total-simulation cost MPC with state constraints for different horizons} 
+		\label{tab:total-simulation cost MPC with state constrains} 
+		\input{./tables/MPC_state_const_cost_table}
+	\end{minipage}
+
+\subsection{Remark}
+	Simulations with a horizon of N,$\frac{1}{2}$N or 2N give all most the same results with or without $F_{max}$ or $F_{max}$. The results of simulations with an increased $F_{max}$ can be seen in figure~\ref{fig:MPC with state constraints increased F} and figure~\ref{fig:MPC with state constraints increased F, traject comparison} in the appendix.

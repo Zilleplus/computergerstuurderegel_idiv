@@ -1,0 +1,14 @@
+run('part1.m');
+run('part2_step_anal.m');
+run('part2.m');
+run('part3.m');
+run('part4.m');
+run('part5.m');
+run('part5_compare.m');
+run('part6.m');
+run('part7.m');
+run('part7_extra.m');
+close all;
+clear all;
+clc;
+disp('Generated all the figures, report can be generated');

@@ -1,0 +1,62 @@
+\section{MPC controller with terminal cost}
+The previous cost function can be adjusted to incorporate the infinite horizon(equation~\ref{eq:MPC def terminal cost}) as was done with the lqr. This extra term will represent all the future values and hopefully reduce the dependence of the algorithm on the size of the horizon. This reduced dependence on the horizon length is visible in figure~\ref{fig:comparison MPC with terminal cost for different horizons}. 
+
+Without the terminal cost the improvement going from a horizon of N to 2N is quiet drastic compared to the improvement from N/2 to N. But with the terminal cost the improvement going from N to N/2 and 2N to N is about the same. Figure~\ref{fig:MPC with and without terminal cost and different horizons} in the appendix also shows this. The dotted parallel lines vs the normal lines. This effect is also visible in Table~\ref{tab:total-simulation cost MPC with terminal cost} where the relative difference is not of order 2 going from a horizon of N to 2N compared to going from 0.5N to N. Where as this was of a factor 10 larger in case of the classical MPC.
+
+\begin{equation}
+	\begin{aligned}
+		& \min_{x_N,u_N}
+		& & \sum^{N-1}_{i=1} 	(x(k+i) - x_{ref}(k+i))^TQ(x(k+i) - x_{ref}(k+i)) \\
+		& & & + \sum^{N-1}_{i=0} 	(u(k+i) - u_{ref}(k+i))^TR(u(k+i) - u_{ref}(k+i))\\
+		& & & + (u(k+N) - u_{ref}(k+N))^TR(u(k+N) - u_{ref}(k+N))\\
+		& \text{subject to}
+		& & x(k+1+i) = Ax(k+i) +Bu(k+i) \qquad    i=0,1,..., N-1\\
+		&&& |u(k+i)| \leq u_{max} \qquad    i=0,1,..., N-1
+	\end{aligned}
+	\label{eq:MPC def terminal cost}
+\end{equation}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC_term_cost/compare_ROI.png}
+		\caption{with terminal cost}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC/compare_horizon.png}
+		\caption{without terminal cost}
+	\end{subfigure}
+	\caption{comparison MPC with terminal cost for different horizons}
+	\label{fig:comparison MPC with terminal cost for different horizons}
+\end{figure} 
+
+\subsection{Comparison with and without terminal cost}
+As mentioned earlier if the horizon is increased the computational cost per iteration is increased. The trajectory used in this assignment has a sharp corner near the end. Only a horizon of 2N was enough to take this corner properly.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC_term_cost/compare_ROI_0_5_N.png}
+		\caption{horizon=N/2}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC_term_cost/compare_ROI_N.png}
+		\caption{horizon=N}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\includegraphics[width=\textwidth]{MPC_term_cost/compare_ROI_2_N.png}
+		\caption{horizon=2N}
+	\end{subfigure}
+	\caption{comparison MPC with and without terminal cost, zoomed in on last corner}
+\end{figure}
+
+\subsection{Total-simulation cost}
+As mentioned in the beginning of this section , the influence of the horizon is reduced because of the terminal cost term. This can also be observed in table~\ref{tab:total-simulation cost MPC with terminal cost}, the two relative differences do not increase by a factor of 10. 
+
+\begin{minipage}{\linewidth}
+	\centering
+	\captionof{table}{total-simulation cost MPC with terminal cost for different horizons} 
+	\label{tab:total-simulation cost MPC with terminal cost} 
+	\input{./tables/MPC_term_cost_cost_table}
+\end{minipage}
+
