@@ -23,6 +23,12 @@ Cd= C*inv(eye(size(A))-A.*(Ts/2));
 Dd= D + C*inv(eye(size(A))-A.*(Ts/2))*B*(Ts/2);
 
 part4_2_function_analyse_discrete_system(Ad,Bd,Cd,Dd,Ts);
+
+% is the system minimum?
+sysd=ss(Ad,Bd,Cd,Dd,Ts);
+sysr = minreal(sysd);
+[a,b,c,d] = ssdata(sysr);
+norm(a-Ad)+norm(b-Bd) % if this is zero then the system is minimal
 %% zero and hold
 clc;
 % define descrete matrices zero and hold:

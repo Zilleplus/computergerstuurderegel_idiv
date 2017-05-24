@@ -1,8 +1,9 @@
 % load the lin model:
+clear all;
 run('part4_1_lin_approx.m');
-clc;
+close all;clc;
 
-% define descrete matrices for euler:
+% define descrete matrices for bilinear:
 Adiscrete= inv(eye(size(A))-A.*(Ts/2))*(eye(size(A))+A.*(Ts/2));
 Bdiscrete= inv(eye(size(A))-A.*(Ts/2))*B*Ts;
 Cdiscrete= C*inv(eye(size(A))-A.*(Ts/2));
@@ -26,6 +27,8 @@ sol=left\right;
 
 Nx=sol(1:12,:);
 Nu=sol(13:end,:);
+
+% ctrb([Adiscrete -Bdiscrete*K; L*Cdiscrete Adiscrete-Bdiscrete*K-L*Cdiscrete])
 %% implement an LQR controller with integral action
 % define the augemented system with the integrator variables
 II=zeros(6,12);
@@ -70,6 +73,12 @@ K0=K(:,4:15);
 % variable using in simulink:
 I_filter = eye(3,6);
 
+%% check the controllability of the LQR integrator augmented system
+C_= ctrb(Anew,Bnew);
+disp(['The rank of the controllability matrix should be 15 in reality it is ' ...
+num2str(rank(C_))]);
+[~,svd_D,~]=svd(C_);
+disp(['The smallest singular values is:' num2str(min(diag(svd_D)))]);
 %% adjusted full-state controller for 0.1 load
 % define an Q and an R
 ss_discrete=ss(Adiscrete,Bdiscrete,Cdiscrete,Ddiscrete,Ts);
