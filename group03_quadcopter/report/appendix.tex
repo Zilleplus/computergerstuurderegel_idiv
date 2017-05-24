@@ -1,0 +1,26 @@
+\section{Appendix: matlab code}
+The following matlab files are important to run the code:
+\begin{itemize}
+	\item part4\_1\_lin\_approx.m
+	\item part4\_2\_discrete\_matrix.m
+	\item part4\_3.m
+\end{itemize}
+
+"part4\_1\_lin\_approx.m" contains code to set up the linear model. "part4\_2\_discrete\_matrix.m" contains the numerical analysis of the the discrete model. "part4\_3.m" contains the calculation of the matrices for 4 things:
+
+\begin{itemize}
+	\item the full state controller
+	\item LQR with integral action
+	\item full state controller with weight of 0.1
+	\item The kallman filter
+\end{itemize}
+
+After the user executed a perticular section "part4\_3.m"  and so calculated the matrices its possible to run the following simulink files that use them:
+
+\begin{itemize}
+	\item part4\_3\_fullstate.slx
+	\item part4\_3\_integrator.slx
+	\item part4\_4\_simu\_LQG\_.slx
+	\item part4\_4\_simu\_LQG\_kalmanF.slx
+\end{itemize}
+

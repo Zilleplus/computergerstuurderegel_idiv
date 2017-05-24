@@ -61,10 +61,10 @@ Q=\begin{bmatrix}
 \end{bmatrix}
 $$
 
-\subsection{Simulation without weight}
+\subsection{Simulation without payload}
 The same weight matrices from the integrator will be used.
 
-The output noise is in the range of $10^{-5}$ this seems like a good place to start. So an diagonal matrix with $10^{-5}$ is taken as starting point. After a few tries it becomes clear that $10^-{3}$ seems to give the best results displayed in figure~\ref{fig:LQG step 1}.
+The output noise is in the range of $10^{-5}$ this seems like a good place to start for the state noise. So an diagonal matrix with $10^{-5}$ is taken as starting point. After a few tries it becomes clear that $10^-{3}$ seems to give the best results displayed in figure~\ref{fig:LQG step 1}.
 
 \begin{figure}[H]
 	\centering
@@ -76,14 +76,14 @@ The output noise is in the range of $10^{-5}$ this seems like a good place to st
 		\includegraphics[width=\textwidth]{./LQG/kalman_covar/fig3_init.eps}
 		\caption{individual axis}
 	\end{subfigure}
-	\caption{LQG controller with Q taken as a diagonal matrix with $10^-3$ on its diagonal}\label{fig:LQG step 1}
+	\caption{LQG controller with Q taken as a diagonal matrix with $10^{-3}$ on its diagonal}\label{fig:LQG step 1}
 \end{figure}
 
-The oscillations on the x,y and z axis on figure~\ref{fig:LQG step 1} are partially due to the integrator. It over steers the motors this is the same problem as with determining the matrices for the integrator LQR controller. The first 3 diagonal elements of the Q matrix are increased from $10^{-3}$ to $10^{-1}$. An other way of looking at it is that the integrator adds the difference on x,y and z, and the numerical error on adding numbers is the sum of the absolute errors.
+The oscillations on the x,y and z axis on figure~\ref{fig:LQG step 1} are partially due to the integrator. It over steers the motors this is a similar issue as with determining the matrices for the integrator LQR controller. The first 3 diagonal elements of the Q matrix are increased from $10^{-3}$ to $10^{-1}$. An other way of looking at it is that the integrator adds the difference on x,y and z, and the numerical error on adding numbers is the sum of the absolute errors.
 
-This however is not sufficient to fix the z-axis increasing the variance even further does not improve the results by a lot. Maybe the variance on the  state of z-axis is actually larger. By increasing the 6th diagonal element from $10^-3$ to $10^2$ there is an significant improvement on the z-axis. The voltages send to the motors however is staring to oscillate so going higher then $10^2$ will increase the results but robustness will be lost. The final results are displayed in figure~\ref{fig:LQG without weight final}.
+This however is not sufficient to fix the z-axis, increasing the variance even further does not improve the results significantly. Maybe the variance on the  state of z-axis is actually larger. By increasing the 6th diagonal element from $10^{-3}$ to $10^{2}$ there is an significant improvement on the z-axis. The voltages send to the motors however is staring to oscillate so going higher then $10^2$ will increase the results but robustness will be lost. The final results are displayed in figure~\ref{fig:LQG without weight final}.
 
-The surprising thing about the final result is that the average time is about the same as with using the actual states instead of the kalman filter. However the system output is a bit more nervous. 
+The surprising thing about the final result is that the average time is about the same as with using the actual states instead of the kalman filter. However the system output is a bit more nervous. The kalman filter is obviously an estimate of the state and not the real state itself.
 
 \begin{figure}[H]
 	\centering
@@ -111,8 +111,8 @@ The surprising thing about the final result is that the average time is about th
 \end{figure}
 
 
-\subsection{simulation with weight}
-The result of the quad copter with 0.1 weight is displayed in figure~\ref{fig:LQG with weight}. The average run time is again about the same as with the actual states instead of the kalman filter. 
+\subsection{Simulation with weight}
+The result of the quad copter with 0.1 weight is displayed in figure~\ref{fig:LQG with weight}. The average run time is again about the same as with the actual states instead of the kalman filter. This obviously means that the kallman filter is quiet a good estimator of the real states. On the other hand the integrator is quiet robust which reduces the influence a bit of the estimator.
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}[b]{0.3\textwidth}

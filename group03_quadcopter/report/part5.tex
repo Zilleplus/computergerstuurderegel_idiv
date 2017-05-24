@@ -54,7 +54,7 @@ The full-state feedback controller seems to get into trouble when adding a weigh
 \end{figure}
 
 \subsection{Integrator}
-The Integrator seems to work just fine with the load. Its a bit slower as it takes about 3.4s now to complete the track. But contrary to the full-state feedback it does finish the track unadjusted. (results displayed in Figure~\ref{fig:Integrator with load}).
+The Integrator seems to work just fine with the load. Its a bit slower as it takes about 3.4s now to complete the track. But contrary to the full-state feedback it does finish the track unadjusted. (results displayed in Figure~\ref{fig:Integrator with load}). The full-state feedback gives a certain power to the motor if it is a certain distance from the reference. So if the weight is added this power is not sufficient anymore. The integrator on the other had integrates the error, which is done at real time. It will take some time but the integration value will slowly compensate for the weight.
 
 \begin{figure}[H]
 	\centering
@@ -81,9 +81,12 @@ The Integrator seems to work just fine with the load. Its a bit slower as it tak
 	\caption{integrator with 0.1 load, average of 3.393 s}\label{fig:Integrator with load}
 \end{figure}
 
-\subsection{Comparison}
-The full-state feedback controller can only steer on the current situation. So when the x,y and z coordinates are different from the track it will compensate for this at a constant rate. It doesn't matter how long the copter is off the track it will keep compensating at this constant rate. 
+\subsection{Fundamental difference integrator and full state-feedback controller}
+The full-state feedback controller can only steer on the current situation. So when the x,y and z coordinates are different from the track it will compensate for this at a constant rate. It doesn't matter how long(so time, not distance) the copter is off the track it will keep compensating at this constant rate. 
 
-The Integrator on the other hand will integrate the difference and so at first it will only compensate slightly but the longer the copter is off track the harder it will compensate. This is also the reason why the integrator over compensates, and an additional weight must be set to the speeds $v_x$,$v_y$ and $v_z$.
+The Integrator on the other hand will integrate the difference and so at first it will only compensate slightly but the longer the copter is off track the harder it will compensate. This is also part of the the reason why the integrator over compensates, and an additional weight must be set to the speeds $v_x$,$v_y$ and $v_z$.
 
-The integrator is a discrete integrator with equal distance points, and equal weights to each value. If the Integrator has 20 high values then 3 low values will not significantly change the integration value. But 10 low values will significantly change the integration value.
+The integrator is a discrete integrator with equal distance points, and equal weights to each value. If the Integrator has 20 high values then 3 low values will not significantly change the integration value. But 10 low values will significantly change the integration value. This integration is done at real time which means that the integration value is different if the situation changes. Which is the whole reason its more robust.
+
+%The fundamental difference between the integral controller and the full state is that the integrator uses all of the past error values. As it integrates over all the errors. While the full state controller only looks at the current error. Obviously if you have more information you can control better, so the integrator has a distinct advantage over the full state controller.
+

@@ -1,19 +1,38 @@
 \section{LQR controller without payload}
 \subsection{full-state feedback controller}
+\subsubsection{Introduction}
+The system with the full state controller is given by $u_k=N_ur_k - K(\hat{x}_k-N_xr_k)$.With $\bar{N} = N_u + KN_x$ $N_u$ and $N_x$ are determined by equation~\ref{eq:full state Nx Nu formula}. If this control law is filled in in $x_{k+1} = Ax_k + bu_k$ the the augmented system is defined by: $x_{k+1}=(A-BK)x_k + B(N_u - KN_x)r_k$. This system does not have any inputs so its not controllable. If C is taken as a diagonal matrix then it is observable.
 
-The controller is constructed in Simulink (Figure~\ref{fig:diagram full-state feedback controller}) according to the diagram on page 221 of the course notes. A type 1 full-state feedback was used as its more robust, which is desirable as its controlling a flying object. 
+\begin{equation}
+	\begin{bmatrix}
+		A-I & B \\
+		C & D
+	\end{bmatrix}
+	\begin{bmatrix}
+		N_x\\
+		N_u
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		0 \\
+		I
+	\end{bmatrix}
+	\label{eq:full state Nx Nu formula}
+\end{equation}
+
+\subsection{Simulink simulation}
+The controller is constructed in Simulink (Figure~\ref{fig:diagram full-state feedback controller}) according to the diagram on page 221 of the course notes. A type 1 full-state feedback was used as its more robust, which is desirable as its controlling a flying object with even a weight on it later on. 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./LQR_noload/full_state_feedback_simu.png}
+	\includegraphics[width=0.7\textwidth]{./LQR_noload/full_state_feedback_simu.png}
 	\caption{simulink diagram full-state feedback controller}
 	\label{fig:diagram full-state feedback controller}
 \end{figure}
 
-The matrix K is calculate with the LQR method as we did in the second exercise session. However in order to do LQR we need a matrix Q and R. As LQR minimizes $J_N = \frac{1}{2} \sum_{k=0}^{N-1}[x_k^TQx_k + u^T_kRu_k] + \frac{1}{2}x_N^TQx_N$. Notice how Q determines the weights given to $x_k$ and and R determines the weights given to $u_k$. 
+The matrix K is calculate with the LQR method as was done in the second exercise session. However in order to use LQR the matrices Q and R are needed. As LQR minimizes $J_N = \frac{1}{2} \sum_{k=0}^{N-1}[x_k^TQx_k + u^T_kRu_k] + \frac{1}{2}x_N^TQx_N$. Notice how Q determines the weights given to $x_k$ and and R determines the weights given to $u_k$. 
 
-If Q and R are taken as an diagonal matrix with ones on the diagonal then the quad copter does not have enough power to stay in the air. This is displayed in Figure~\ref{fig:full-state controller with simple diagonal matrices as Q and R}. Its very clear from Figure~\ref{fig:full-state controller with simple diagonal matrices as Q and R demo bad z position} that the controller does not optimize enough on the z axis.
-
+If Q and R are taken as an diagonal matrix with ones on the diagonal then the quad copter does not have enough power to stay in the air. This is displayed in Figure~\ref{fig:full-state controller with simple diagonal matrices as Q and R}.  Figure~\ref{fig:full-state controller with simple diagonal matrices as Q and R demo bad z position} indicates clearly that the controller does not optimize enough on the z axis.
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}[b]{0.3\textwidth}
@@ -32,7 +51,7 @@ If Q and R are taken as an diagonal matrix with ones on the diagonal then the qu
 	\caption{full-state controller when Q and R are unit matrices}\label{fig:full-state controller with simple diagonal matrices as Q and R}
 \end{figure}
 
-In order to get a proper controller we need to put way more weight on the position z in the optimization problem. This is done by increasing a value in Q, as the z coordinate is an state. 
+In order to get a balanced controller more weight must be given to optimizing on the position z. This is realized by increasing the corresponding value in Q, as the z coordinate is an state.
 
 $$ 
 Q=
@@ -73,7 +92,9 @@ $$
 
 Figure~\ref{fig:full-state controller with adjusted Q matrix but a unit matrix as R} contains the results of the full state controller with the adjusted Q matrix. The quad-copter does reach all its checkpoint but the input voltages on the motors are rather low. 
 
-Lowering the values of R  will result in higher voltages and so an increase speed. But keeping robustness in mind R must still be sufficiently large to avoid oscillating or extremely fast changes in voltages. A diagonal value of 0.1 seems to be reasonable for R, this is illustrated in Figure~\ref{fig:full-state controller with proper diagonal matrices as Q and R}.The adjustment of R improves the average time from 3.736 to 3.214 s. Notice how the voltage also get lower in Figure~\ref{fig:full-state controller with proper diagonal matrices as Q and R - voltages}, the controller is way more nervous then in Figure~\ref{fig:full-state controller with low voltage}.
+Lowering the values of R  will result in higher voltages and so an increase speed. But keeping robustness in mind R must still be sufficiently large to avoid an oscillating or extremely fast changing output. A diagonal value of 0.1 seems to be reasonable for R, this is illustrated in Figure~\ref{fig:full-state controller with proper diagonal matrices as Q and R}.
+
+The adjustment of R improves the average time from 3.736 to 3.214 s. Notice how the voltage also get lower in Figure~\ref{fig:full-state controller with proper diagonal matrices as Q and R - voltages}, the controller is a bit more nervous then in Figure~\ref{fig:full-state controller with low voltage}.
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}[b]{0.3\textwidth}
@@ -89,7 +110,7 @@ Lowering the values of R  will result in higher voltages and so an increase spee
 		\includegraphics[width=\textwidth]{./LQR_noLoad/full_state/full_state_feedback_final_fig2.eps}
 		\caption{track}
 	\end{subfigure}
-	\caption{full-state controller with proper diagonal matrices as Q and R, average time is 3.214 s}\label{fig:full-state controller with proper diagonal matrices as Q and R}
+	\caption{full-state controller with proper diagonal matrices as Q and R, average time is 3.214 second s}\label{fig:full-state controller with proper diagonal matrices as Q and R}
 \end{figure}
 \subsubsection{Final weight matrices}
 
@@ -107,9 +128,9 @@ Q=\begin{bmatrix}
 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & \\
 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & \\
 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \\
+% 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \\
+% 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \\
+% 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \\
 \end{bmatrix}
 $$
 $$
