@@ -57,3 +57,24 @@ C(1:3,1:3)=eye(3,3);
 C(4:6,7:9)=eye(3,3);
 
 D=zeros(6,4);
+
+
+%% uncomment to generate the step impulse
+% sim('part4_1_lin_approximation');
+% fig=figure;
+% subplot(1,2,1);
+% for i=1:6
+%     plot(lin_model_stepresponse.Time,lin_model_stepresponse.Data(:,i));hold all;
+% end
+% title('linear model');
+% xlabel('t(s)');
+% legend('x','y','z','\phi','\theta','\gamma','location','northwest');
+% subplot(1,2,2);
+% for i=1:6
+%     plot(non_lin_model_stepresponse.Time,non_lin_model_stepresponse.Data(:,i));hold all;
+% end
+% title('non-linear model');
+% xlabel('t(s)');
+% legend('x','y','z','\phi','\theta','\gamma','location','northwest');
+% 
+% saveas(fig,'./report/img/lin_approx/step_all.png');
